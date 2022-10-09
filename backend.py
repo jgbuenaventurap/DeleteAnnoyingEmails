@@ -37,4 +37,3 @@ while tokens!="":
 SERVICE.users().messages().batchDelete(userId="me",body={'ids': blacklist}).execute()
 
 blacklist.clear()
-#ayuda Natalia
