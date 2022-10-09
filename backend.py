@@ -15,7 +15,7 @@ def desmenuzar(google_mails):
       ids_emails.append(ids) 
    return ids_emails 
 
-correo="no-reply@twitch.tv"
+correo="english-personalized-digest@quora.com"
 blacklist=[]
 count=0
 
