@@ -17,7 +17,6 @@ def desmenuzar(google_mails):
 
 correo="english-personalized-digest@quora.com"
 blacklist=[]
-count=0
 
 pagetoken_dict=SERVICE.users().messages().list(userId="me",maxResults=500,q=correo).execute()
 pagetoken = pagetoken_dict.get('nextPageToken')
@@ -32,7 +31,6 @@ while tokens!="":
       if len(pagetoken_dict)==2:
          blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
          tokens=""
-
 
 SERVICE.users().messages().batchDelete(userId="me",body={'ids': blacklist}).execute()
 
