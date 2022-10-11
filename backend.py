@@ -15,7 +15,15 @@ def desmenuzar(google_mails):
       ids_emails.append(ids) 
    return ids_emails 
 
-correo="english-personalized-digest@quora.com"
+def revchunk(a):
+  a_list = list(reversed(a))
+  chunked_list = list()
+  chunk_size = 1000
+  for i in range(0, len(a_list), chunk_size):
+      chunked_list.append(a_list[i:i+chunk_size])
+  return chunked_list
+
+correo="contacto@gorigogo.com"
 blacklist=[]
 
 pagetoken_dict=SERVICE.users().messages().list(userId="me",maxResults=500,q=correo).execute()
@@ -31,7 +39,11 @@ while tokens!="":
       if len(pagetoken_dict)==2:
          blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
          tokens=""
-
-SERVICE.users().messages().batchDelete(userId="me",body={'ids': blacklist}).execute()
-
+if len(blacklist)<1000:
+   revblacklist=revchunk(blacklist)
+   for revlist in revblacklist:
+      SERVICE.users().messages().batchDelete(userId="me",body={'ids':revlist}).execute()
+else:
+   revblacklist=list(reversed(blacklist))
+   SERVICE.users().messages().batchDelete(userId="me",body={'ids':blacklist}).execute()
 blacklist.clear()
