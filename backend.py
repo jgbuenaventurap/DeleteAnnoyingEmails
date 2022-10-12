@@ -1,5 +1,6 @@
 from Google import Create_Service
 import json
+import datetime 
 
 CLIENT_FILE="client.json"
 API_NAME="gmail"
@@ -23,27 +24,64 @@ def revchunk(a):
       chunked_list.append(a_list[i:i+chunk_size])
   return chunked_list
 
-correo="contacto@gorigogo.com"
+"""def jsonBlacklist():
+   a_file = open("blacklist.json", "r")
+   json_object = json.load(a_file)
+   a_file.close()
+   json_object={correo:len(blacklist)}
+   a_file = open("blacklist.json", "a")
+   json.dump(json_object, a_file)
+   a_file.close()"""
+
+correo="newsletter@bbcearth.bbc.com"
 blacklist=[]
-
+dates=[]
+actual_date = datetime.date.today()
+print(actual_date)
 pagetoken_dict=SERVICE.users().messages().list(userId="me",maxResults=500,q=correo).execute()
-pagetoken = pagetoken_dict.get('nextPageToken')
-tokens = pagetoken
-blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
 
-while tokens!="":
-      pagetoken_dict=SERVICE.users().messages().list(userId="me",maxResults=500,pageToken=tokens,q=correo).execute()
-      pagetoken=pagetoken_dict.get('nextPageToken')
-      blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
-      tokens=pagetoken
-      if len(pagetoken_dict)==2:
-         blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
-         tokens=""
-if len(blacklist)<1000:
-   revblacklist=revchunk(blacklist)
-   for revlist in revblacklist:
-      SERVICE.users().messages().batchDelete(userId="me",body={'ids':revlist}).execute()
+for msg in pagetoken_dict['messages']:
+    m_id = msg['id'] # get id of individual message
+    message = SERVICE.users().messages().get(userId='me', id=m_id).execute()
+    payload = message['payload'] 
+    header = payload['headers']
+
+    for item in header:
+        if item['name'] == 'Date':
+           date = item['value']
+           dates.append(date)
+
+
+
+if len(pagetoken_dict)==1:
+   print(f"No hay mensajes para borrar de la direccion {correo}")
 else:
-   revblacklist=list(reversed(blacklist))
-   SERVICE.users().messages().batchDelete(userId="me",body={'ids':blacklist}).execute()
-blacklist.clear()
+   pagetoken = pagetoken_dict.get('nextPageToken')
+   tokens = pagetoken
+   blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
+
+   while tokens!="":
+         pagetoken_dict=SERVICE.users().messages().list(userId="me",maxResults=500,pageToken=tokens,q=correo).execute()
+         pagetoken=pagetoken_dict.get('nextPageToken')
+         blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
+         tokens=pagetoken
+         if len(pagetoken_dict)==2:
+            blacklist=blacklist+(desmenuzar(pagetoken_dict.get('messages')))
+            tokens=""
+   if len(blacklist)>1000:
+      revblacklist=revchunk(blacklist)
+      for revlist in revblacklist:
+         #jsonBlacklist()
+         SERVICE.users().messages().batchDelete(userId="me",body={'ids':revlist}).execute()
+      print(f"Borrado exitoso de {len(blacklist)} correos")
+   else:
+      revblacklist=list(reversed(blacklist))
+      #jsonBlacklist()
+      SERVICE.users().messages().batchDelete(userId="me",body={'ids':blacklist}).execute()
+      print(f"Borrado exitoso de {len(blacklist)} correos de {correo}")
+   blacklist.clear()
+
+
+
+   
+          
