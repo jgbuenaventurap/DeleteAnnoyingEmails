@@ -1,6 +1,7 @@
 from Google import Create_Service
 import json
 import datetime 
+from timeit import default_timer as timer
 
 CLIENT_FILE="client.json"
 API_NAME="gmail"
@@ -24,24 +25,15 @@ def revchunk(a):
       chunked_list.append(a_list[i:i+chunk_size])
   return chunked_list
 
-"""def jsonBlacklist():
-   a_file = open("blacklist.json", "r")
-   json_object = json.load(a_file)
-   a_file.close()
-   json_object={correo:len(blacklist)}
-   a_file = open("blacklist.json", "a")
-   json.dump(json_object, a_file)
-   a_file.close()"""
-
-correo="newsletter@bbcearth.bbc.com"
+correo="noreply-co@customers.decathlon.com"
 blacklist=[]
 dates=[]
 actual_date = datetime.date.today()
-print(actual_date)
 pagetoken_dict=SERVICE.users().messages().list(userId="me",maxResults=500,q=correo).execute()
+Tiempo1 = timer()
 
-for msg in pagetoken_dict['messages']:
-    m_id = msg['id'] # get id of individual message
+"""for msg in pagetoken_dict['messages']:
+    m_id = msg['id'] 
     message = SERVICE.users().messages().get(userId='me', id=m_id).execute()
     payload = message['payload'] 
     header = payload['headers']
@@ -49,8 +41,7 @@ for msg in pagetoken_dict['messages']:
     for item in header:
         if item['name'] == 'Date':
            date = item['value']
-           dates.append(date)
-
+           dates.append(date)"""
 
 
 if len(pagetoken_dict)==1:
@@ -71,17 +62,36 @@ else:
    if len(blacklist)>1000:
       revblacklist=revchunk(blacklist)
       for revlist in revblacklist:
-         #jsonBlacklist()
          SERVICE.users().messages().batchDelete(userId="me",body={'ids':revlist}).execute()
       print(f"Borrado exitoso de {len(blacklist)} correos")
    else:
       revblacklist=list(reversed(blacklist))
-      #jsonBlacklist()
       SERVICE.users().messages().batchDelete(userId="me",body={'ids':blacklist}).execute()
       print(f"Borrado exitoso de {len(blacklist)} correos de {correo}")
-   blacklist.clear()
+  
+Tiempo2 = timer()
+TTotal = Tiempo2 - Tiempo1
+a=[{correo:len(blacklist),"Tiempo de ejecucion":Tiempo2-Tiempo1}]
 
+if len(pagetoken_dict) !=1:
+   try:
+      jsonFile = json.load(open('blacklist.json'))
+   except FileNotFoundError:
+      jsonFile = {}
+      archivo = open('blacklist.json', 'a+')
+   except json.decoder.JSONDecodeError:
+      jsonFile = {}
 
+   jsonFile.setdefault("correo" + str(len(jsonFile) + 1),
+    {
+        correo: len(blacklist),
+        "TiempoEjecucion": Tiempo2 - Tiempo1
+    }
+)
+   archivo = open('blacklist.json', 'w')
+   json.dump(jsonFile, archivo, indent=4)
+   archivo.close()
 
-   
-          
+print("Tiempo de Procesamiento =",TTotal,"seg.") 
+print(a)
+blacklist.clear()

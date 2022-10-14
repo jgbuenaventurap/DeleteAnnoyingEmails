@@ -1,1 +1,10 @@
-{"newsletter@movistar-colombia.co": 288}
+{
+    "correo1": {
+        "NumeroCorreos": 6,
+        "TiempoEjecucion": 0.4841828000062378
+    },
+    "correo2": {
+        "noreply-co@customers.decathlon.com": 3,
+        "TiempoEjecucion": 0.554192099996726
+    }
+}
