@@ -1,6 +1,7 @@
 from Google import Create_Service
 import json
 import datetime 
+from datetime import timedelta
 from timeit import default_timer as timer
 
 CLIENT_FILE="client.json"
@@ -32,7 +33,7 @@ actual_date = datetime.date.today()
 pagetoken_dict=SERVICE.users().messages().list(userId="me",maxResults=500,q=correo).execute()
 Tiempo1 = timer()
 
-"""for msg in pagetoken_dict['messages']:
+for msg in pagetoken_dict['messages']:
     m_id = msg['id'] 
     message = SERVICE.users().messages().get(userId='me', id=m_id).execute()
     payload = message['payload'] 
@@ -41,8 +42,30 @@ Tiempo1 = timer()
     for item in header:
         if item['name'] == 'Date':
            date = item['value']
-           dates.append(date)"""
+           dates.append(date)
 
+#aqui las convierte en una lista para que se puedan leer
+for i in range(len(dates)):
+  a = dates[i].split(" ")
+  unwanted = [0, 5] 
+  for ele in sorted(unwanted, reverse = True):
+      del a[ele]
+  month_name = a[1]
+  #esto es para volver el mes de letras en número
+  datetime_object = datetime.datetime.strptime(month_name, "%b")
+  a[1] = str(datetime_object.month)
+  stri = a[2]+"-"+a[1]+"-"+a[0]+" "+a[3]
+  dates[i] = stri
+#aquí define la fecha actual
+actual_date = datetime.datetime.today()
+for date in dates:
+  #aquí convierte las cosas en el formato de la libreria Datetime 
+  date_given = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+  print(date_given)
+  #aquí las compara: si al sumar tres días a la fecha de envío da menor a la fecha actual, pues da True y se borra
+  print(f"Es {date_given+timedelta(days = 3) < actual_date} que el correo se envió hace 3 días o más")
+
+print(dates)
 
 if len(pagetoken_dict)==1:
    print(f"No hay mensajes para borrar de la direccion {correo}")
