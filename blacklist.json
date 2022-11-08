@@ -6,5 +6,21 @@
     "correo2": {
         "noreply-co@customers.decathlon.com": 3,
         "TiempoEjecucion": 0.554192099996726
+    },
+    "correo3": {
+        "hola@nequi.com.co": 9,
+        "TiempoEjecucion": 0.45989360000021406
+    },
+    "correo4": {
+        "news@mkt.clarovideo.com": 12,
+        "TiempoEjecucion": 0.4640481999995245
+    },
+    "correo5": {
+        "Coursera@email.coursera.org": 21,
+        "TiempoEjecucion": 0.37869400000090536
+    },
+    "correo6": {
+        "informacion@mailgrupobancolombia.com.co": 24,
+        "TiempoEjecucion": 0.38312909999876865
     }
 }
