@@ -1,13 +1,16 @@
-from Google import Create_Service
+# print('inicio la ejecucion
+import datetime
 import json
-import datetime 
 from datetime import timedelta
 from timeit import default_timer as timer
+
+from Google import Create_Service
 
 CLIENT_FILE="client.json"
 API_NAME="gmail"
 API_VERSION="v1"
 SCOPES=["https://mail.google.com/"]
+
 
 SERVICE=Create_Service(CLIENT_FILE,API_NAME,API_VERSION,SCOPES)
 
@@ -153,5 +156,5 @@ with open('correos.json') as json_correos:
          print("Tiempo de Procesamiento =",TTotal,"seg.") 
          print(a)
 
-
 blacklist.clear()
+
