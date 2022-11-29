@@ -1,8 +1,9 @@
+import asyncio
 import subprocess
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from pydantic import BaseModel
 
 import manipulacionArchivos
 
@@ -23,16 +24,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class objeMail(BaseModel):
+  correo :str
+  dias: int
+
+async def backend():
+    p=subprocess.call(["python", "backend.py"],
+                   stdout=subprocess.PIPE)
+    
+    print(p)
+
+
 @app.get("/hello")
 
-def hello():
-  subprocess.call("backend.py", shell=True)
-  return {"Hello world!"}  
+async def hello():
+    await backend()
+    return {"Hello world!"}  
 
 
-@app.get("/correos", )
-  
+
+@app.get("/correos", )  
 def datos():
   datos = manipulacionArchivos.OpenfileCorreos()
   return datos;
 
+@app.post("/agregar", )
+  
+async def updateCorreos(item: objeMail):  
+  return manipulacionArchivos.agreeMail(item.correo,item.dias)
+ 
+#  datos = manipulacionArchivos.upDateFileCorreos("prueba1@henry.com",0)
+#   return datos

@@ -1,15 +1,8 @@
 {
-    "correos": [{
-        "correo": "noticias@promociones.cinemark.com.co",
-        "dias": 3
-    }, {
-        "correo": "Coursera@email.coursera.org",
-        "dias": 3
-    }, {
-        "correo": "buyer-info16.m@mail.aliexpress.com",
-        "dias": 0
-    },{
-        "correo": "notice-buyer08.g@mail.aliexpress.com"
-    }
-]
+    "correos": [
+        {
+            "correo": "henryantonio@gmail.com",
+            "dias": 5
+        }
+    ]
 }
